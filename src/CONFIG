@@ -1,0 +1,16 @@
+%define TOTAL_ENTRIES 0
+
+%define OS_1_NAME
+%define OS_1_FILE
+
+%define OS_2_NAME
+%define OS_2_FILE
+
+%define OS_3_NAME
+%define OS_3_FILE
+
+%define OS_4_NAME
+%define OS_4_FILE
+
+%define OS_5_NAME
+%define OS_5_FILE
