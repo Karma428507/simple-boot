@@ -1,4 +1,4 @@
-%define TOTAL_ENTRIES 0
+%define TOTAL_ENTRIES
 
 %define OS_1_NAME
 %define OS_1_FILE

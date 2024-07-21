@@ -95,7 +95,7 @@ Elf32_Jump:
 
     ; End
     call Paging_32
-    mov ebx, [.BOOT_SIGNATURE]
+    mov ebx, MULTIBOOT1_INFO
     mov eax, [0x50000 + ELF_32_STRUCTURE.PROGRAM_ENTRY_OFFSET]
     jmp eax
     ; Jump to end

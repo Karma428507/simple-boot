@@ -1,12 +1,16 @@
 # Simpleboot
 This project is to help OS developers have a easy way of booting into there own systems without the need of worrying about trying to run a file in 512 bytes, trying to build an ELF reader, using a large amount of assembly and mode transitioning. We also provide a 'root' folder to allow the developer to put there system files for ease of access. This manager is intended for beginners at this version with internal tools and multiboot information not present yet.
 
+## Update 1.0.1
+This update now provides a miminal multiboot1 info structure for both 32 and 64 bit systems and a bug that displays garbage data when no entries are added to the config file has been fixed. This update is only to help provide memory and VBE information that would be available in real mode.
+
 ## Features
 Due to this manager being in early versions, it is limited on what it can do. However it can still function as any other manager with the features being:
 - FAT32 support
 - ACHI support
 - ELF support
 - Multiple OS support (max 5)
+- Multiboot1 header.
 
 Due to this being an early version and lack of time developing, ATA drive is not supported yet.
 

@@ -55,6 +55,11 @@ Load_Rest:
     mov si, DAP_Structure
     int 0x13
 
+Setup_Multiboot_BIOS:
+    call Load_1MB_Memory
+    call E820_Loader
+    call VBE_Setup
+
 ; Loads the screen
 Screen_Init:
     ; Setup screen
@@ -89,9 +94,10 @@ Decide_Mode:
 
     jmp CODE_32_SEG:Protected_Mode_Entry
 
-;%include "src/Bootmanager/Real/Memory.asm"
+%include "src/Bootmanager/Real/Memory.asm"
 %include "src/Bootmanager/Real/String_16.asm"
 %include "src/Bootmanager/Real/Text.asm"
+%include "src/Bootmanager/Real/Video.asm"
 
 ; Setup segments and jump into the main part of the manager
 [bits 32]
@@ -118,14 +124,66 @@ DAP_Structure:
     .LOWER      dd 0x00
     .HIGHER     dd 0x00
 
-times (512 * 0x06) - ($ - $$) db 0
+BIOS_DATA_TABLE:
+    .LOWER: dd 0x00000000
+    .UPPER: dd 0x00000000
+    .E820_TOTAL: dd 0x00000000
+    .VBE_MODE: dw 0x0000
+    .FLAGS: db 0b01000001
 
 %include "src/Bootmanager/Data/BPB.asm"
 %include "src/Bootmanager/Data/GDT.asm"
 
-; Empty space for 
-times (512 * 0x20) - ($ - $$) db 0
+times (512 * 0x06) - ($ - $$) db 0
 
+VBE_MODE_INFO:
+    .Attributes:                dw 0x0000
+    .OLD_Window_A:              db 0x00
+    .OLD_Window_B:              db 0x00
+    .OLD_Grandularity:          dw 0x0000
+    .Window_Size:               dw 0x0000
+    .Segment_A:                 dw 0x0000
+    .Segment_B:                 dw 0x0000
+    .OLD_Win_Func_Ptr:          dd 0x00000000
+    .Pitch:                     dw 0x0000
+    .Width:                     dw 0x0000
+    .Height:                    dw 0x0000
+    .UNUSED_W_Char:             db 0x00
+    .UNUSED_Y_Char:             db 0x00
+    .Planes:                    db 0x00
+    .BPP:                       db 0x00
+    .OLD_Banks:                 db 0x00
+    .Memory_Model:              db 0x00
+    .OLD_Bank_Size:             db 0x00
+    .Image_Pages:               db 0x00
+    .Reserved0:                 db 0x00
+    .Red_Mask:                  db 0x00
+    .Red_Position:              db 0x00
+    .Green_Mask:                db 0x00
+    .Green_Position:            db 0x00
+    .Blue_Mask:                 db 0x00
+    .Blue_Position:             db 0x00
+    .Reserved_Mask:             db 0x00
+    .Reserved_Position:         db 0x00
+    .Direct_Color_Attributes:   db 0x00
+    .Framebuffer:               dd 0x00000000
+    .Off_Screen_Memory_Offset:  dd 0x00000000
+    .Off_Screen_Memory_Size:    dw 0x0000
+    .Reserved1:                 times 206 db 0x00
+    
+VBE_CONTROL_INFO:
+    .Signature:                 db "VESA"
+    .Version:                   dw 0x0000
+    .OEM_String:                dd 0x00000000
+    .Capabilities:              dd 0x00000000
+    .Video_Modes:               dd 0x00000000
+    .Total_Memories:            dw 0x0000
+    .Reserved:                  times 492 db 0x00
+
+BIOS_E820_STORAGE:
+
+; Empty space for BIOS data
+times (512 * 0x20) - ($ - $$) db 0
 ; A way for OSes to be reconized before adding JSON support
 %include "src/CONFIG"
 
@@ -140,6 +198,12 @@ times (512 * 0x20) - ($ - $$) db 0
 
 ; Loads the main stuff and goes into the shell
 Init_Protected_Mode:
+    %if TOTAL_ENTRIES == 0
+        mov eax, SHELL_NO_OS_FOUND
+        call Print_32
+        jmp $
+    %endif
+    
     call Init_AHCI
     call Init_FAT32
     call Check_Long_Mode
@@ -157,6 +221,7 @@ Init_Protected_Mode:
         cmp ecx, TOTAL_ENTRIES
         jl .Entry_Loop
 
+    call MULTIBOOT1_LOAD
     call Shell
     jmp $
 
@@ -270,6 +335,7 @@ Protected_Mode_Enter_Long_Mode:
 %include "src/Bootmanager/FileTypes/Executable.asm"
 %include "src/Bootmanager/Tools/Console.asm"
 %include "src/Bootmanager/Tools/Entries.asm"
+%include "src/Bootmanager/Tools/Multiboot1.asm"
 %include "src/Bootmanager/Tools/String_32.asm"
 %include "src/Bootmanager/FAT32.asm"
 %include "src/Bootmanager/Paging.asm"
@@ -286,7 +352,7 @@ Long_Mode_Entry:
     mov gs, ax
     mov ss, ax
 
-    mov rbx, [.LONG_MODE_SIGNATURE]
+    mov rbx, MULTIBOOT1_INFO
     mov rax, [Elf64_Jump.ENTRY_POINT]
     jmp rax
 
