@@ -87,35 +87,22 @@ These are the updates I'm planning to add to this manager, the 'Possible future 
 
 ### Version 1.1:
 - Changing the config file into a seperate JSON file
-- ATA driver support
-- Having an executable to assemble the code and allow the manager to be placed anywhere
-- Bug fixes
+- Have a executable installer with tools instead or using shell scripts
+- MBR and GPT partition support
+- General debugging
 
 ### Version 1.2:
-- Improved ELF executer
-- MULTIBOOT 2 information
-- 16 bit program launcher
-- OS memory restrictions (Can't boot to a kernel if it doesn't fit the size of RAM).
+- Switch to C
+- ATA driver
+- Debug tools (Terminal, hex editor, basic bash commands)
+- Improve MULTIBOOT1
 
 ### Version 1.3:
-- Improved FAT32 "driver"
-- Terminal
-- System information commands
-- Built in text editor and hex editor
+- Support a basic bytecode language for custom filesystems
+- Work on an GUI
+- Add PE support
 
 ### Version 1.4:
-- MBR support
-- Different drive support
-- FAT12/16 file support
 - UEFI support
-
-### Possible future updates
-- GUI
-- PE/COFF format support
-- Internal assembler
-- Custom script file
-- NTFS support
-
-## History
-
-This project has started out as a low level game. This game was planned to be a few month project that started in 11/17/2023. After a weeks, I've decided to make a functional OS instead but I didn't know about filesystems yet and I was too stuborn to use GRUB. I've used MKFS.VFAT and created a boot sector that loads a file. After I've loaded into the kernel, I've spent two months creating an ACHI driver but realize that I need to finish this project soon. Building my FAT32 "driver" made me realize that I don't have time to make an OS but I can still make a boot manager. I've added all the features, fixed some bugs and made more optimised. After working on that I've published on GIT.
+- Create a UEFI wrapper for legacy BIOS systems
+- MULTIBOOT2

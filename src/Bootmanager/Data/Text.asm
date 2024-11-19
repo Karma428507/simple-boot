@@ -1,4 +1,4 @@
-SHELL_OS_SELECT_A db "Simple Boot, V.1.0.0", 0x00
+SHELL_OS_SELECT_A db "Simple Boot, V.1.0.1", 0x00
 SHELL_OS_SELECT_B db "Use A/D to switch OSes, press enter to load OS.", 0x00
 
 SHELL_TERMINAL_MESSAGE_A db "[MANAGER NAME HERE], V.1", 0x00
